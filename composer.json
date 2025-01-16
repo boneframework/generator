@@ -1,6 +1,6 @@
 {
-    "name": "delboy1978uk/blank",
-    "description": "A blank project",
+    "name": "boneframework/generator",
+    "description": "Class generator for Bone Framework",
     "license": "MIT",
     "authors": [
         {
