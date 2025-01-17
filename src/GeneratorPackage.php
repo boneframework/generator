@@ -3,15 +3,16 @@
 namespace Bone\Generator;
 
 use Barnacle\Container;
+use Barnacle\RegistrationInterface;
 use Bone\Console\CommandRegistrationInterface;
-use Bone\Contracts\Container\RegistrationInterface;
+use Bone\Generator\Command\ControllerCommand;
 
 class GeneratorPackage implements RegistrationInterface, CommandRegistrationInterface
 {
     public function registerConsoleCommands(Container $container): array
     {
         $controller = new ControllerCommand();
-        $controller->setName('generate:contrtoller');
+        $controller->setName('generate:controller');
 
         return [
             $controller
@@ -20,6 +21,5 @@ class GeneratorPackage implements RegistrationInterface, CommandRegistrationInte
 
     public function addToContainer(Container $c): void
     {
-        die('AYE');
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
-namespace Del\Generator;
+namespace Bone\Generator\Command;
 
-use _PHPStan_62c6a0a8b\Symfony\Component\Console\Style\SymfonyStyle;
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ClearBuildsCommand extends Command
+class ControllerCommand extends Command
 {
     public function __construct()
     {
@@ -23,7 +22,7 @@ class ClearBuildsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle();
+        $io = new SymfonyStyle($input, $output);
         $io->success('Bone Framework Generator');
 
         return  Command::SUCCESS;
