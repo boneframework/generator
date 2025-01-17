@@ -9,7 +9,8 @@
     }
   ],
   "require": {
-    "php": "^8.3"
+    "php": "^8.3",
+    "nette/php-generator": "^4.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
