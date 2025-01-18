@@ -8,6 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function array_search;
+use function count;
+
 class ControllerCommand extends Command
 {
     public function __construct(
@@ -26,15 +29,15 @@ class ControllerCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Bone Framework Generator');
-        $srcFolderNamespace = $io->ask('Enter the base namespace for src/ : ', 'Bone\\App');
-        $controllerNamespace = $io->ask('Enter the controller namespace: ', 'Controller');
+        $srcFolderNamespace = $io->ask('Enter the base namespace for src/ : ', 'Bone');
+        $controllerNamespace = $io->ask('Enter the controller namespace: ', 'App\\Controller');
         $controllerName = $io->ask('Enter the controller name: ', 'TestController');
         $features = [];
         $keepAddingFeatures = true;
         $chosenFeatures = [];
-        $features = ['entity manager', 'i18n', 'logger', 'pdo', 'serializer', 'session', 'site config', 'view', 'continue'];
+        $features = [...ControllerGeneratorService::FEATURES, 'continue'];
 
-        while ($keepAddingFeatures) {
+        while ($keepAddingFeatures && count($features) > 1) {
             $io->horizontalTable(['selected Featues'], [[\implode(', ', $chosenFeatures)]]);
             $feature = $io->choice('Select a feature or choose to continue', $features);
 
@@ -42,7 +45,7 @@ class ControllerCommand extends Command
                 $keepAddingFeatures = false;
             } else {
                 $chosenFeatures[] = $feature;
-                $key = \array_search($feature, $features);
+                $key = array_search($feature, $features);
                 unset($features[$key]);
             }
         }
@@ -57,8 +60,8 @@ class ControllerCommand extends Command
             return Command::SUCCESS;
         }
 
-        $this->controllerGeneratorService->generateController($srcFolderNamespace, $controllerNamespace, $controllerName, $features);
-        $io->success('Generated ' . $namespace . '\\' . $controllerName . ' in BUILDFOLDERHERE');
+        $this->controllerGeneratorService->generateController($srcFolderNamespace, $controllerNamespace, $controllerName, $chosenFeatures);
+        $io->success('Generated ' . $namespace . '\\' . $controllerName . ' in ' . $path);
 
         return  Command::SUCCESS;
     }
