@@ -10,6 +10,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function array_search;
 use function count;
+use function explode;
+use function implode;
 
 class ControllerCommand extends Command
 {
@@ -22,7 +24,7 @@ class ControllerCommand extends Command
     protected function configure()
     {
         $this->setDescription('Generate a Controller');
-        $this->setHelp('Clears the build folder out');
+        $this->setHelp('Generate a Controller with an index action and selected features');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -50,18 +52,19 @@ class ControllerCommand extends Command
             }
         }
 
-        $path = './src/' . $controllerNamespace . '/' . $controllerName . '.php';
+        $controllerNamespacePath = implode('/', explode('\\', $controllerNamespace));
+        $path = './src/' . $controllerNamespacePath . '/' . $controllerName . '.php';
         $io->writeln('Controller will be generated to ' . $path);
         $confirm = $io->confirm('Is this OK?');
 
         if (!$confirm) {
             $io->error('Controller generation cancelled.');
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         $this->controllerGeneratorService->generateController($srcFolderNamespace, $controllerNamespace, $controllerName, $chosenFeatures);
-        $io->success('Generated ' . $namespace . '\\' . $controllerName . ' in ' . $path);
+        $io->success('Generated ' . $controllerName . ' in ' . $path);
 
         return  Command::SUCCESS;
     }

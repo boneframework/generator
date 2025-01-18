@@ -80,8 +80,6 @@ class ControllerGeneratorService
         foreach ($features as $feature) {
             $namespace->addUse(self::INTERFACES[$feature]);
             $namespace->addUse(self::TRAITS[$feature]);
-            $file->addUse(self::INTERFACES[$feature]);
-            $file->addUse(self::TRAITS[$feature]);
             $class->addImplement(self::INTERFACES[$feature]);
             $class->addTrait(self::TRAITS[$feature]);
         }
