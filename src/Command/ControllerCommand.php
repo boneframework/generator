@@ -34,7 +34,6 @@ class ControllerCommand extends Command
         $srcFolderNamespace = $io->ask('Enter the base namespace for src/ : ', 'Bone');
         $controllerNamespace = $io->ask('Enter the controller namespace: ', 'App\\Controller');
         $controllerName = $io->ask('Enter the controller name: ', 'TestController');
-        $features = [];
         $keepAddingFeatures = true;
         $chosenFeatures = [];
         $features = [...ControllerGeneratorService::FEATURES, 'continue'];

@@ -5,7 +5,9 @@ namespace Bone\Generator;
 use Barnacle\Container;
 use Barnacle\RegistrationInterface;
 use Bone\Console\CommandRegistrationInterface;
+use Bone\Generator\Command\ApiEntityCommand;
 use Bone\Generator\Command\ControllerCommand;
+use Bone\Generator\Service\ApiGeneratorService;
 use Bone\Generator\Service\ControllerGeneratorService;
 
 class GeneratorPackage implements RegistrationInterface, CommandRegistrationInterface
@@ -16,8 +18,12 @@ class GeneratorPackage implements RegistrationInterface, CommandRegistrationInte
         $controller = new ControllerCommand($controllerGeneratorService);
         $controller->setName('generate:controller');
 
+        $apiGeneratorService = new ApiGeneratorService();
+        $api = new ApiEntityCommand($apiGeneratorService);
+
         return [
-            $controller
+            $controller,
+            $api,
         ];
     }
 
