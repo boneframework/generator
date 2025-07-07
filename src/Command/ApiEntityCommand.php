@@ -6,14 +6,11 @@ use Bone\Generator\Service\ApiGeneratorService;
 use Bone\Generator\Service\ControllerGeneratorService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function array_search;
-use function count;
-use function explode;
 use function file_put_contents;
-use function implode;
 use function strtolower;
 
 class ApiEntityCommand extends Command
@@ -21,27 +18,31 @@ class ApiEntityCommand extends Command
     public function __construct(
         private ApiGeneratorService $apiGeneratorService
     ){
-        parent::__construct('api-entity');
+        parent::__construct('generate:api-entity');
     }
 
     protected function configure()
     {
         $this->setDescription('Generate an entity with REST controller and service');
         $this->setHelp('Generate an entity with REST controller and service');
+        $this->addOption('load', 'l', InputOption::VALUE_REQUIRED, 'Load the config json file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Bone Framework API Entity Generator');
+        $io->title('💀 Bone Framework API Entity Generator');
         $load = $input->hasOption('load') ? $input->getOption('load') : false;
 
         if ($load) {
             $json = file_get_contents($load . '.json');
             $data = json_decode($json, true);
+            $this->apiGeneratorService->setIo($io);
             $this->apiGeneratorService->generateApi($data);
             $io->success('Generated API. Have a nice day!');
         } else {
+            $outputFolder = $io->ask('Where should we generate the code? ', 'src/App');
+            $outputFolderNamespace = $io->ask('What is the base namespace for ' . $outputFolder . '? ', 'Bone\\App');
             $entityName = $io->ask('Enter the entity name: ');
             $fields = [];
 
@@ -106,13 +107,15 @@ class ApiEntityCommand extends Command
             $data = [
                 'entity' => $entityName,
                 'fields' => $fields,
+                'outputFolder' => $outputFolder,
+                'outputFolderNamespace' => $outputFolderNamespace,
             ];
             $json = json_encode($data);
             $path = strtolower($entityName) . '.json';
             file_put_contents($path, $json);
             $io->success([
                 'Config saved to ' . $path,
-                'Run `bone api-entity --load=' . strtolower($entityName) . '` to generate.'
+                'Run `bone generate:api-entity --load=' . strtolower($entityName) . '` to generate.'
                 ]);
         }
 

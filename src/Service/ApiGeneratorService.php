@@ -4,21 +4,66 @@ declare(strict_types=1);
 
 namespace Bone\Generator\Service;
 
-use Bone\Generator\Exception\GeneratorException;
-use function file_exists;
+use Bone\Generator\Service\Api\EntityGeneratorService;
+use Bone\Generator\Traits\CanGenerateFile;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApiGeneratorService
 {
-    public function generateApi(array $data): void
-    {
-        $entityName = $data['entity'];
-        $fields = $data['fields'];
+    use CanGenerateFile;
+
+    private SymfonyStyle $io;
+    private string $entityName;
+    private array $fields;
+    private string $outputFolder;
+    private string $baseNamespace;
+
+    public function setIo(SymfonyStyle $io) {
+        $this->io = $io;
     }
 
-    private function ensureNoFileExists(string $fileName): void
+    public function generateApi(array $data): void
     {
-        if (file_exists($fileName)) {
-            throw new GeneratorException(GeneratorException::FILE_EXISTS);
-        }
+        $this->entityName = $data['entity'];
+        $this->fields = $data['fields'];
+        $this->outputFolder = $data['outputFolder'];
+        $this->baseNamespace = $data['namespace'];
+        $this->generateEntity();
+        $this->generateService();
+        $this->generateController();
+        $this->generateSpec();
+        $this->generateTests();
+    }
+
+    public function generateEntity(): void
+    {
+        $generator = new EntityGeneratorService();
+        $generator->generateEntity($this->outputFolder, $this->baseNamespace, $this->entityName, $this->fields);
+        $this->io->info('generated entity..');
+    }
+
+    public function generateService(): void
+    {
+
+    }
+
+    public function generateController(): void
+    {
+
+    }
+
+    public function generateSpec(): void
+    {
+
+    }
+
+    public function generateTests(): void
+    {
+
+    }
+
+    public function generateRoute(): void
+    {
+
     }
 }
