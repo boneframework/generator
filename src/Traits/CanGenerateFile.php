@@ -59,4 +59,12 @@ trait CanGenerateFile
             }
         }
     }
+
+    protected function createPHPFile(): PhpFile
+    {
+        $file = new PhpFile();
+        $file->setStrictTypes();
+
+        return $file;
+    }
 }

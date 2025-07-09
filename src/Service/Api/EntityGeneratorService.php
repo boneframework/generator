@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bone\Generator\Service\Api;
 
 use Bone\Generator\Traits\CanGenerateFile;
-use Doctrine\DBAL\Types\Types;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
@@ -54,15 +53,8 @@ class EntityGeneratorService
             $this->createField($namespace, $class, $field);
         }
 
+        $this->createToArray($class, $fields);
         $this->writeFile($file, $fileName);
-    }
-
-    private function createPHPFile(): PhpFile
-    {
-        $file = new PhpFile();
-        $file->setStrictTypes();
-
-        return $file;
     }
 
     private function createNamespace(PhpFile $file, string $entityNamespace): PhpNamespace
@@ -115,7 +107,7 @@ class EntityGeneratorService
         $property->setPrivate();
         $property->setType($phpType);
         $attributeData = ['type' => $doctrineType];
-        $regex = '#.max:+(?<length>\d+).+#';
+        $regex = '#.+max:(?<length>\d+).+#';
         preg_match($regex, $validation, $result);
 
         if ($result['length']) {
@@ -216,5 +208,34 @@ class EntityGeneratorService
 
         $getter->setBody($getterBody);
         $setter->setBody($setterBody);
+    }
+
+    private function createToArray(ClassType $class, array $fields): void
+    {
+        $method = $class->addMethod('toArray');
+        $method->setReturnType('array');
+        $body = "return [\n";
+
+        foreach ($fields as $field) {
+            $body .= '    \'' . $field['name'] . '\' => ';
+            $body .= $this->getToArrayGetter($field['name'], $field['type']);
+            $body .= "\n";
+        }
+
+        $body .= '];';
+        $method->setBody($body);
+    }
+
+    private function getToArrayGetter(string $field, string $type): string
+    {
+        switch ($type) {
+            case 'date':
+            case 'datetime':
+                return '$this->' . $field . '->format(\'Y-m-d H:i:s\'),';
+            case 'json':
+                return '$this->get' . ucfirst($field) . '(),';
+            default:
+                return '$this->' . $field . ',';
+        }
     }
 }

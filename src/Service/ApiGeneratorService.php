@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bone\Generator\Service;
 
 use Bone\Generator\Service\Api\EntityGeneratorService;
+use Bone\Generator\Service\Api\ServiceGeneratorService;
 use Bone\Generator\Traits\CanGenerateFile;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -44,7 +45,9 @@ class ApiGeneratorService
 
     public function generateService(): void
     {
-
+        $generator = new ServiceGeneratorService();
+        $generator->generateService($this->outputFolder, $this->baseNamespace, $this->entityName);
+        $this->io->info('generated service..');
     }
 
     public function generateController(): void

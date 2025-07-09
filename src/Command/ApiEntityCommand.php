@@ -104,11 +104,12 @@ class ApiEntityCommand extends Command
 
                 $continue = $io->confirm('Add another field?');
             } while ($continue === true);
+
             $data = [
                 'entity' => $entityName,
                 'fields' => $fields,
                 'outputFolder' => $outputFolder,
-                'outputFolderNamespace' => $outputFolderNamespace,
+                'namespace' => $outputFolderNamespace,
             ];
             $json = json_encode($data);
             $path = strtolower($entityName) . '.json';
