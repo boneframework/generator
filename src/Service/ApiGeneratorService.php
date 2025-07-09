@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bone\Generator\Service;
 
+use Bone\Generator\Service\Api\ControllerGeneratorService;
 use Bone\Generator\Service\Api\EntityGeneratorService;
 use Bone\Generator\Service\Api\ServiceGeneratorService;
 use Bone\Generator\Traits\CanGenerateFile;
@@ -40,19 +41,21 @@ class ApiGeneratorService
     {
         $generator = new EntityGeneratorService();
         $generator->generateEntity($this->outputFolder, $this->baseNamespace, $this->entityName, $this->fields);
-        $this->io->info('generated entity..');
+        $this->io->writeln('generated entity..');
     }
 
     public function generateService(): void
     {
         $generator = new ServiceGeneratorService();
         $generator->generateService($this->outputFolder, $this->baseNamespace, $this->entityName);
-        $this->io->info('generated service..');
+        $this->io->writeln('generated service..');
     }
 
     public function generateController(): void
     {
-
+        $generator = new ControllerGeneratorService();
+        $generator->generateController($this->outputFolder, $this->baseNamespace, $this->entityName);
+        $this->io->writeln('generated controller..');
     }
 
     public function generateSpec(): void
