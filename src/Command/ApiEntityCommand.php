@@ -3,7 +3,6 @@
 namespace Bone\Generator\Command;
 
 use Bone\Generator\Service\ApiGeneratorService;
-use Bone\Generator\Service\ControllerGeneratorService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,7 +41,10 @@ class ApiEntityCommand extends Command
             $io->success('Generated API. Have a nice day!');
         } else {
             $outputFolder = $io->ask('Where should we generate the code? ', 'src/App');
+            $specFolder = $io->ask('Where should we generate the API spec? ', 'spec');
+            $testFolder = $io->ask('Where should we generate the tests? ', 'tests/Api');
             $outputFolderNamespace = $io->ask('What is the base namespace for ' . $outputFolder . '? ', 'Bone\\App');
+            $testNamespace = $io->ask('What is the test namespace for ' . $testFolder . '? ', 'Tests\\Api');
             $entityName = $io->ask('Enter the entity name: ');
             $fields = [];
 
@@ -109,7 +111,10 @@ class ApiEntityCommand extends Command
                 'entity' => $entityName,
                 'fields' => $fields,
                 'outputFolder' => $outputFolder,
+                'specFolder' => $specFolder,
+                'testFolder' => $testFolder,
                 'namespace' => $outputFolderNamespace,
+                'testNamespace' => $testNamespace,
             ];
             $json = json_encode($data);
             $path = strtolower($entityName) . '.json';

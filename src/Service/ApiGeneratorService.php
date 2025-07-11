@@ -7,6 +7,7 @@ namespace Bone\Generator\Service;
 use Bone\Generator\Service\Api\ControllerGeneratorService;
 use Bone\Generator\Service\Api\EntityGeneratorService;
 use Bone\Generator\Service\Api\ServiceGeneratorService;
+use Bone\Generator\Service\Api\TestGeneratorService;
 use Bone\Generator\Traits\CanGenerateFile;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -15,10 +16,13 @@ class ApiGeneratorService
     use CanGenerateFile;
 
     private SymfonyStyle $io;
+    private string $baseNamespace;
     private string $entityName;
     private array $fields;
     private string $outputFolder;
-    private string $baseNamespace;
+    private string $specFolder;
+    private string $testFolder;
+    private string $testNamespace;
 
     public function setIo(SymfonyStyle $io) {
         $this->io = $io;
@@ -29,7 +33,10 @@ class ApiGeneratorService
         $this->entityName = $data['entity'];
         $this->fields = $data['fields'];
         $this->outputFolder = $data['outputFolder'];
+        $this->specFolder = $data['specFolder'];
+        $this->testFolder = $data['testFolder'];
         $this->baseNamespace = $data['namespace'];
+        $this->testNamespace = $data['testNamespace'];
         $this->generateEntity();
         $this->generateService();
         $this->generateController();
@@ -65,7 +72,9 @@ class ApiGeneratorService
 
     public function generateTests(): void
     {
-
+        $generator = new TestGeneratorService();
+        $generator->generateTest($this->testFolder, $this->testNamespace, $this->entityName, $this->fields);
+        $this->io->writeln('generated test..');
     }
 
     public function generateRoute(): void
