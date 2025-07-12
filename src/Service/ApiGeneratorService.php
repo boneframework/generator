@@ -9,11 +9,13 @@ use Bone\Generator\Service\Api\EntityGeneratorService;
 use Bone\Generator\Service\Api\ServiceGeneratorService;
 use Bone\Generator\Service\Api\TestGeneratorService;
 use Bone\Generator\Traits\CanGenerateFile;
+use Bone\Generator\Traits\CanGenerateRoutes;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApiGeneratorService
 {
     use CanGenerateFile;
+    use CanGenerateRoutes;
 
     private SymfonyStyle $io;
     private string $baseNamespace;
@@ -42,6 +44,7 @@ class ApiGeneratorService
         $this->generateController();
         $this->generateSpec();
         $this->generateTests();
+        $this->generateRoutes();
     }
 
     public function generateEntity(): void
@@ -77,8 +80,13 @@ class ApiGeneratorService
         $this->io->writeln('generated test..');
     }
 
-    public function generateRoute(): void
+    public function generateRoutes(): void
     {
-
+        $slug = $this->getUrlSlug($this->entityName);
+        $this->io->writeln('generated routes...');
+        $this->io->info([
+            'Please add the following to your router config in your package',
+            '$router->apiResource(\'' . $slug . '\', ' . $this->entityName . 'Controller::class, $c);',
+        ]);
     }
 }
